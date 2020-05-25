@@ -38,6 +38,11 @@ namespace Florix_Feedback.Controllers
             {
                 return View("Index");
             }
+            if (feedbackDto.Anonymous)
+            {
+                feedbackDto.Name = null;
+                feedbackDto.Email = null;
+            }
             var feedback = new Feedback(feedbackDto);
             _context.Add(feedback);
             await _context.SaveChangesAsync();
@@ -49,8 +54,7 @@ namespace Florix_Feedback.Controllers
                     var data = new StringContent(JsonConvert.SerializeObject(feedback), Encoding.UTF8, "application/json");
                     _logger.LogInformation(
                         $"Notifying '{hook.CallbackUrl}' with type = {feedback.Type}," + $"anonymous = {feedback.Anonymous}, " +
-                        $"name = {feedback.Name}, email = {feedback.Email}, reporting person = {feedback.ReportingPersonName}, " +
-                        $"reporting person email = {feedback.ReportingPersonEmail}");
+                        $"name = {feedback.Name}, email = {feedback.Email}");
                     var result = await client.PostAsync(hook.CallbackUrl, data);
                     _logger.LogInformation($"Notification result: {result.StatusCode}");
                 }

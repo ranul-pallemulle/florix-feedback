@@ -19,8 +19,6 @@ namespace Florix_Feedback.Models
             Type = (FeedbackType)Enum.Parse(typeof(FeedbackType), dto.Type, true);
             Name = dto.Name;
             Email = dto.Email;
-            ReportingPersonName = dto.ReportingPersonName;
-            ReportingPersonEmail = dto.ReportingPersonEmail;
             Comments = dto.Comments;
             Anonymous = dto.Anonymous;
             CreateDate = DateTime.UtcNow;
@@ -32,8 +30,6 @@ namespace Florix_Feedback.Models
         public FeedbackType Type { get; private set; }
         public string Name { get; private set; }
         public string Email { get; private set; }
-        public string ReportingPersonName { get; private set; }
-        public string ReportingPersonEmail { get; private set; }
         public string Comments { get; private set; }
         public bool Anonymous { get; private set; }
     }
@@ -50,13 +46,6 @@ namespace Florix_Feedback.Models
         [RequiredIfNotAnonymous(ErrorMessage = "Email is required")]
         [EmailAddress]
         public string Email { get; set; }
-
-        [Required(ErrorMessage = "Name of reporting person is required")]
-        public string ReportingPersonName { get; set; }
-
-        [Required(ErrorMessage = "Email of reporting person is required")]
-        [EmailAddress]
-        public string ReportingPersonEmail { get; set; }
 
         [Required(ErrorMessage = "Comments are required")]
         [StringLength(1000)]
