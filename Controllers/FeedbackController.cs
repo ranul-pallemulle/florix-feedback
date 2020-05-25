@@ -48,7 +48,9 @@ namespace Florix_Feedback.Controllers
                 {
                     var data = new StringContent(JsonConvert.SerializeObject(feedback), Encoding.UTF8, "application/json");
                     _logger.LogInformation(
-                        $"Notifying '{hook.CallbackUrl}' with type={feedback.Type}, name={feedback.Name}, email={feedback.Email}");
+                        $"Notifying '{hook.CallbackUrl}' with type = {feedback.Type}," + $"anonymous = {feedback.Anonymous}, " +
+                        $"name = {feedback.Name}, email = {feedback.Email}, reporting person = {feedback.ReportingPersonName}, " +
+                        $"reporting person email = {feedback.ReportingPersonEmail}");
                     var result = await client.PostAsync(hook.CallbackUrl, data);
                     _logger.LogInformation($"Notification result: {result.StatusCode}");
                 }

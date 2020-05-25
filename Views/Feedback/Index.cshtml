@@ -15,15 +15,25 @@
         </select>
         <span asp-validation-for="Type" class="text-danger"></span>
     </div>
-    <div class="form-group">
+    <div class="form-group hide-if-anon">
         <label asp-for="Name" class="control-label">Name</label>
         <input asp-for="Name" class="form-control" />
         <span asp-validation-for="Name" class="text-danger"></span>
     </div>
-    <div class="form-group">
+    <div class="form-group hide-if-anon">
         <label asp-for="Email" class="control-label">Email</label>
         <input asp-for="Email" class="form-control" />
         <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="ReportingPersonName" class="control-label">Reporting Person Name</label>
+        <input asp-for="ReportingPersonName" class="form-control" />
+        <span asp-validation-for="ReportingPersonName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="ReportingPersonEmail" class="control-label">Reporting Person Email</label>
+        <input asp-for="ReportingPersonEmail" class="form-control" />
+        <span asp-validation-for="ReportingPersonEmail" class="text-danger"></span>
     </div>
     <div class="form-group">
         <label asp-for="Comments" class="control-label">Comments</label>
@@ -31,7 +41,32 @@
         <span asp-validation-for="Comments" class="text-danger"></span>
     </div>
     <div class="form-group">
+        <label asp-for="Anonymous" class="control-label">
+            <input asp-for="Anonymous" id="anon-checkbox" /> Stay Anonymous
+        </label>
+        <span asp-validation-for="Anonymous" class="text-danger"></span>
+    </div>
+    <div class="form-group">
         <input type="submit" value="Submit" class="btn btn-primary" />
     </div>
 </form>
+
+<script>
+    var anonCheck = document.getElementById("anon-checkbox");
+    function initHidingFields() {
+        var elements = document.getElementsByClassName("hide-if-anon");
+        if (anonCheck.checked) {
+            Array.from(elements).forEach((element) => element.classList.add("hidden"));
+        } else {
+            Array.from(elements).forEach((element) => element.classList.remove("hidden"));
+        }
+    }
+    initHidingFields();
+    anonCheck.addEventListener("change", () => initHidingFields());
+</script>
+<style>
+    .hidden {
+        display: none;
+    }
+</style>
 
