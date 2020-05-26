@@ -52,11 +52,18 @@ namespace Florix_Feedback.Controllers
                 foreach (var hook in hooks)
                 {
                     var data = new StringContent(JsonConvert.SerializeObject(feedback), Encoding.UTF8, "application/json");
-                    _logger.LogInformation(
-                        $"Notifying '{hook.CallbackUrl}' with type = {feedback.Type}," + $"anonymous = {feedback.Anonymous}, " +
-                        $"name = {feedback.Name}, email = {feedback.Email}");
-                    var result = await client.PostAsync(hook.CallbackUrl, data);
-                    _logger.LogInformation($"Notification result: {result.StatusCode}");
+                    try
+                    {
+                        _logger.LogInformation(
+                            $"Notifying '{hook.CallbackUrl}' with type = {feedback.Type}," + $"anonymous = {feedback.Anonymous}, " +
+                            $"name = {feedback.Name}, email = {feedback.Email}");
+                        var result = await client.PostAsync(hook.CallbackUrl, data);
+                        _logger.LogInformation($"Notification result: {result.StatusCode}");
+                    }
+                    catch (HttpRequestException e)
+                    {
+                        _logger.LogWarning($"Failed to notify {hook.CallbackUrl}:\n{e.Message}");
+                    }
                 }
             }
             return RedirectToAction("Index", "Feedback");
