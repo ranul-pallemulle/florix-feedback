@@ -34,7 +34,7 @@ namespace Florix_Feedback
             {
                 if (_env.IsDevelopment())
                 {
-                    options.UseSqlServer(Configuration.GetConnectionString("TestingDb"));
+                    options.UseSqlServer(Configuration.GetConnectionString("Default"));
                 }
                 else if (_env.IsStaging())
                 {
