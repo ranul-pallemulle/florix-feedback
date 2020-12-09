@@ -62,7 +62,7 @@ namespace Florix_Feedback.Controllers
                     }
                     catch (HttpRequestException e)
                     {
-                        _logger.LogWarning($"Failed to notify {hook.CallbackUrl}:\n{e.Message}");
+                        _logger.LogError($"Failed to notify {hook.CallbackUrl}:\n{e.Message}");
                     }
                 }
             }

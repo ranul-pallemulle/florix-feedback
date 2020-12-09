@@ -14,5 +14,6 @@ namespace Florix_Feedback.Models
 
         public virtual DbSet<Feedback> Feedbacks { get; set; }
         public virtual DbSet<Webhook> Webhooks { get; set; }
+        public virtual DbSet<HooklessCallback> HooklessCallbacks { get; set; }
     }
 }

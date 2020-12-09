@@ -1,0 +1,199 @@
+﻿@{
+    ViewData["Title"] = "Mail Room";
+}
+@model MailRoomItemDto
+<div id="heading">
+    <h2>Mail Room - Floridu</h2>
+    <button id="set-callback-url-button" onclick="setCallbackUrlClick()">
+        <span id="set-callback-url-button-text"></span>
+        <div id="set-callback-url-button-spinner" class="spinner-border m-auto" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </button>
+    <div id="set-callback-url-group">
+        <input type="text">
+        <button onclick="setCallbackUrlConfirm()">Save</button>
+        <button onclick="setCallbackUrlCancel()">Cancel</button>
+    </div>
+</div>
+<hr />
+<br />
+
+<form enctype="multipart/form-data" asp-action="Submit" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="form-group hide-if-anon">
+        <label asp-for="From" class="control-label">From</label>
+        <input asp-for="From" class="form-control" />
+        <span asp-validation-for="From" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="To" class="control-label">To</label>
+        <input asp-for="To" class="form-control" />
+        <span asp-validation-for="To" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Subject" class="control-label">Subject</label>
+        <input asp-for="Subject" class="form-control">
+        <span asp-validation-for="Subject" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Body" class="control-label">Message</label>
+        <textarea asp-for="Body" class="form-control"></textarea>
+        <span asp-validation-for="Body" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Attachments" class="control-label">Attachments</label>
+        <input multiple asp-for="Attachments" type="file" name="Attachments">
+        <span asp-validation-for="Attachments" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input id="submitButton" type="submit" value="Submit" class="btn btn-primary" />
+    </div>
+</form>
+
+<script>
+    const cbButton = document.querySelector('#set-callback-url-button');
+    const cbDiv = document.querySelector('#set-callback-url-group');
+    const cbDivText = document.querySelector('#set-callback-url-group > input');
+    const cbSaveSpinner = document.querySelector('#set-callback-url-button > div#set-callback-url-button-spinner');
+    const cbButtonText = document.querySelector('#set-callback-url-button > span#set-callback-url-button-text');
+    const submitButton = document.querySelector('#submitButton');
+
+    cbEditModeDisable();
+    showSpinner();
+    showCbButtonUrlUnloaded();
+    disableSubmission();
+    loadCallbackUrl().then(url => {
+        cbDivText.value = url;
+        showCbButtonUrlLoaded();
+        enableSubmission();
+        hideSpinner();
+    }).catch(error => {
+        console.log(error);
+        hideSpinner();
+    });
+
+    function setCallbackUrlClick() {
+        cbEditModeEnable();
+    }
+    function setCallbackUrlConfirm() {
+        cbEditModeDisable();
+        const newUrl = cbDivText.value;
+        showSpinner();
+        disableSubmission();
+        saveCallbackUrl(newUrl).then(() => {
+            hideSpinner();
+            showCbButtonUrlLoaded();
+            enableSubmission();
+        }).catch((reason) => {
+            console.log(reason);
+            hideSpinner();
+            enableSubmission();
+            alert("Failed to save workflow URL.");
+            window.location.reload();
+        });
+    }
+    function setCallbackUrlCancel() {
+        cbEditModeDisable();
+    }
+
+    function loadCallbackUrl() {
+        return new Promise((resolve, reject) => {
+            return fetch('/FloriduMailRoom/callback').then(response => {
+                if (response.status === 200) {
+                    resolve(response.text())
+                } else {
+                    reject(response);
+                }
+            }).catch(reason => {
+                reject(reason);
+            });
+        });
+    }
+
+    function saveCallbackUrl(url) {
+        return new Promise((resolve, reject) => {
+            return fetch('/FloriduMailRoom/callback', {
+                method: 'PUT',
+                body: url
+            }).then((response) => {
+                if (response.status === 200) {
+                    resolve();
+                } else {
+                    reject(response);
+                }
+                
+            }).catch((reason) => {
+                reject(reason);
+            });
+        });
+    }
+
+    function showSpinner() {
+        cbSaveSpinner.style.display = 'block';
+        cbButtonText.style.display = 'none';
+    }
+    function hideSpinner() {
+        cbSaveSpinner.style.display = 'none';
+        cbButtonText.style.display = 'block'
+    }
+    function showCbButtonUrlLoaded() {
+        cbButton.style.backgroundColor = '#11bf85';
+        cbButtonText.innerHTML = 'Edit Workflow URL';
+    }
+    function showCbButtonUrlUnloaded() {
+        cbButton.style.backgroundColor = '#EA3C53';
+        cbButtonText.innerHTML = 'Connect Workflow';
+    }
+    function cbEditModeEnable() {
+        cbDiv.style.display = 'block';
+        cbButton.style.display = 'none';
+    }
+    function cbEditModeDisable() {
+        cbDiv.style.display = 'none';
+        cbButton.style.display = 'block';
+    }
+    function enableSubmission() {
+        submitButton.disabled = false;
+    }
+    function disableSubmission() {
+        submitButton.disabled = true;
+    }
+</script>
+
+<style>
+    #heading {
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+    #set-callback-url-button {
+        border-radius: 3px;
+        border: none;
+        background-color: #EA3C53;
+        width: 190px;
+        height: 40px;
+        position: relative;
+        color: #fff;
+    }
+    #set-callback-url-button-text {
+        display: block;
+    }
+    #set-callback-url-group {
+        display: block;
+    }
+    #set-callback-url-group > input {
+        width: 500px;
+        height: 35px;
+        border-radius: 5px;
+        border: 1px solid #000;
+    }
+    #set-callback-url-group > button {
+        width: 100px;
+        height: 35px;
+        border-radius: 5px;
+        background-color: #fff;
+        border: 1px solid #000;
+    }
+</style>
