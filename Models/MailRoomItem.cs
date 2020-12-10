@@ -51,11 +51,9 @@ namespace Florix_Feedback.Models
     public class MailRoomItemDto
     {
         [Required(ErrorMessage = "From is required")]
-        [EmailAddress(ErrorMessage = "From should be an email address")]
         public string From { get; set; }
 
         [Required(ErrorMessage = "To is required")]
-        [EmailAddress(ErrorMessage = "To should be an email address")]
         public string To { get; set; }
 
         [Required(ErrorMessage = "Subject is required")]

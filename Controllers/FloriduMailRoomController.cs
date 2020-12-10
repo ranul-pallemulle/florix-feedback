@@ -93,7 +93,7 @@ namespace Florix_Feedback.Controllers
                     From = submission.From,
                     To = submission.To,
                     Subject = submission.Subject,
-                    Body = submission.Body
+                    Message = submission.Body
                 };
                 if (submission.Attachments.Count > 0)
                 {
@@ -101,12 +101,11 @@ namespace Florix_Feedback.Controllers
                     tempMailType.AttachmentName = submission.Attachments[0].Name;
                 }
                 //var jsonData = new StringContent(JsonConvert.SerializeObject(submission), Encoding.UTF8, "application/json");
-                var jsonData = new StringContent(
-                    JsonConvert.SerializeObject(tempMailType, new JsonSerializerSettings { 
-                        NullValueHandling = NullValueHandling.Ignore 
-                    }), 
-                    Encoding.UTF8, "application/json"
-                );
+                var serialized = JsonConvert.SerializeObject(tempMailType, new JsonSerializerSettings
+                {
+                    NullValueHandling = NullValueHandling.Ignore
+                });
+                var jsonData = new StringContent(serialized, Encoding.UTF8, "application/json");
                 try
                 {
                     _logger.LogInformation($"Notifying {callbackUrl.Url}");
@@ -124,11 +123,17 @@ namespace Florix_Feedback.Controllers
 
         class TempMailType // can only send a single attachment for now
         {
+            [JsonProperty("from")]
             public string From { get; set; }
+            [JsonProperty("to")]
             public string To { get; set; }
+            [JsonProperty("subject")]
             public string Subject { get; set; }
-            public string Body { get; set; }
+            [JsonProperty("message")]
+            public string Message { get; set; }
+            [JsonProperty("attachmentName")]
             public string AttachmentName { get; set; }
+            [JsonProperty("attachment")]
             public string Attachment { get; set; }
         }
     }
